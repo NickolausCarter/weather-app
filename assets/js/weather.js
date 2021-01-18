@@ -94,7 +94,6 @@ var createForecast = function(city) {
         // iterating by 8 to ensure data pull is once per day: API returns information in 3 hour increments (8 * 3 = 24)
         for(let i = 0; i < 40; i += 8) {
           // Create date in MM/DD/YYYY format
-          console.log(data)
           var dateTime = data.list[i].dt_txt;
           var date = dateTime.split(' ')[0];
           var dayMonth = date.split('-').splice(1, 2).join('/');
