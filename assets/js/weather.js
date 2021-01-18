@@ -82,12 +82,13 @@ var createForecast = function(city) {
       response.json().then(function(data) {
         // clear data before adding new data
         $('#forecast-info').empty();
-        for(let i = 0; i < 5; i++) {
+        for(let i = 0; i < 40; i += 8) {
           // Create date in MM/DD/YYYY format
+          console.log(data)
           var dateTime = data.list[i].dt_txt;
-          date = dateTime.split(' ')[0];
-          dayMonth = date.split('-').splice(1, 2).join('/');
-          year = date.split('').splice(0, 4).join('');
+          var date = dateTime.split(' ')[0];
+          var dayMonth = date.split('-').splice(1, 2).join('/');
+          var year = date.split('').splice(0, 4).join('');
           formattedDate = `${dayMonth}/${year}`;
           dateEl = $('<p>').text(formattedDate);
           // create weather icon
