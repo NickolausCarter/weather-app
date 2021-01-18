@@ -29,6 +29,7 @@ var checkForecast = function(city) {
 var createConditions = function(data) {
   // clear old data
   $('#today').empty();
+  $('#uv-index').find('p').empty();
   $('#conditions-info span').text(data.name);
 
   // define current day of the week
@@ -71,6 +72,14 @@ var createConditions = function(data) {
   var humidityEl = $('<p>').text(`Humidity: ${data.main.humidity}%`);
   var windEl = $('<p>').text(`Wind: ${data.wind.speed} Miles/HR`);
   $('#today').append(todayEl, tempEl, humidityEl, windEl, createUV(data));
+  
+  // create UV Index
+  var lowEl = $('<span>').text('Low').addClass('low px-1 rounded-left');
+  var modEl = $('<span>').text('Mod').addClass('mod px-1');
+  var highEl = $('<span>').text('High').addClass('high px-1');
+  var veryHighEl = $('<span>').text('Very High').addClass('very-high px-1');
+  var extremeEl = $('<span>').text('Extreme').addClass('extreme px-1 rounded-right');
+  $('#uv-index').find('p').text('UV Index Reference Chart: ').append(lowEl, modEl, highEl, veryHighEl, extremeEl);
   $('.forecast-container').show();
 };
 
@@ -133,15 +142,15 @@ var createUV = function(obj) {
         var uvIndexEl = $('<span>').text(uv);
         // check uv range and format background color
         if (uv < 3) {
-            uvIndexEl.addClass('low');
+            uvIndexEl.addClass('low rounded px-1');
         } else if (uv < 6) {
-            uvIndexEl.addClass('mod');
+            uvIndexEl.addClass('mod rounded px-1');
         } else if (uv <= 8) {
-            uvIndexEl.addClass('high');
+            uvIndexEl.addClass('high rounded px-1');
         } else if (uv < 11) {
-            uvIndexEl.addClass('very-high');
+            uvIndexEl.addClass('very-high rounded px-1');
         } else {
-            uvIndexEl.addClass('extreme');
+            uvIndexEl.addClass('extreme rounded px-1');
         }
         uvIndexLabelEl.append(uvIndexEl);
       })

@@ -44,11 +44,11 @@ body {
 }
 
 .very-high {
-  background-color: rgb(128, 12, 12);
+  background-color: rgb(255, 0, 0);
   color: white;
 }
 
 .extreme {
-  background-color: rgb(56, 6, 8);
+  background-color: rgb(140, 0, 255);
   color: white;
 }
