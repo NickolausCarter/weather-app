@@ -12,7 +12,7 @@ var checkForecast = function(city) {
   var apiUrl = `https://api.openweathermap.org/data/2.5/weather?units=imperial&q=${city}&appid=${apiKey}`;
   fetch(apiUrl).then(function(response) {
     if(!response.ok) {
-      document.querySelector('#city').setCustomValidity("Invalid City Name");
+      alert("Invalid City Name");
     } else {
       response.json().then(function(data) {
         createConditions(data);
