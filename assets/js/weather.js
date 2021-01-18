@@ -91,6 +91,7 @@ var createForecast = function(city) {
       response.json().then(function(data) {
         // clear data before adding new data
         $('#forecast-info').empty();
+        // iterating by 8 to ensure data pull is once per day: API returns information in 3 hour increments (8 * 3 = 24)
         for(let i = 0; i < 40; i += 8) {
           // Create date in MM/DD/YYYY format
           console.log(data)
