@@ -15,7 +15,7 @@ body {
   background-color: rgba(241, 235, 235, 0.3);
 }
 
-.recent-cities {
+.recent-city-list {
   margin-top: 10px;
 }
 
@@ -27,15 +27,21 @@ body {
   text-transform: capitalize;
 }
 
-.forecast-container div {
+.current-conditions {
+  list-style: none;
+  line-height: 2rem;
+}
+
+.forecast-cards {
   margin: 5px;
+  list-style: none;
 }
 
 .low {
   background-color: rgb(35, 155, 35);
 }
 
-.mod {
+.moderate {
   background-color: rgb(223, 223, 47);
 }
 

@@ -1,38 +1,17 @@
-var recentCities = [];
 var apiKey = '4231d47b64990b1cae9e17f7e8bc249e';
+var cityList = JSON.parse(localStorage.getItem('city')) || [];
 
-// check localstorage
-if (localStorage.getItem('recent') === null) {
-} else {
-  recentCities = JSON.parse(localStorage.getItem('recent'));
+function loadData() {
+  $('.recent-city-list').empty();
+  
+  for (let i = 0; i < cityList.length; i++) {
+    var cityName = $('<li>').addClass('recent-city bg-secondary text-light p-1 col-12').text(cityList[i]);
+    $('.recent-city-list').prepend(cityName);
+  }
 };
 
-// validation
-var checkForecast = function(city) {
-  var apiUrl = `https://api.openweathermap.org/data/2.5/weather?units=imperial&q=${city}&appid=${apiKey}`;
-  fetch(apiUrl).then(function(response) {
-    if(!response.ok) {
-      alert("Invalid City Name");
-    } else {
-      response.json().then(function(data) {
-        createConditions(data);
-        createForecast(city);
-        if (!recentCities.includes(city)) {
-          checkRecent(city);
-        }
-      })
-    }
-  })
-};
-
-// create current weather conditions
-var createConditions = function(data) {
-  // clear old data
-  $('#today').empty();
-  $('#uv-index').find('p').empty();
-  $('#conditions-info span').text(data.name);
-
-  // define current day of the week
+// set day of week, date, and weather icon for heading of current day
+function dayCondition() {
   var today = new Date();
   var weekday = new Array(7);
   weekday[0] = "Sunday";
@@ -49,57 +28,80 @@ var createConditions = function(data) {
   var yyyy = today.getFullYear();
   // create string for current day of week and date
   today = `${currentDay} - ${mm}/${dd}/${yyyy}`;
-  
-  // create weather icon
-  var weatherIconEl = $('#conditions-info').find('img').remove();
-  var weatherIconData = data.weather[0].icon;
-  
-  if (weatherIconData.includes('d')) {
-    weatherIconData = weatherIconData.replace('d', 'n');
-  } 
-  
-  if (weatherIconData.includes('n')) {
-    weatherIconData = weatherIconData.replace('n', 'd');
-  }
-  
-  // add weather icon after city name
-  var weatherIconEl = $('<img>').attr('src', `https://openweathermap.org/img/w/${weatherIconData}.png`);
-  $('#conditions-info').append(weatherIconEl);
-  
-  // create elements for current forecast
-  var todayEl = $('<p>').text(today);
-  var tempEl = $('<p>').text(`Temperature: ${data.main.temp}${String.fromCharCode(176)} F`);
-  var humidityEl = $('<p>').text(`Humidity: ${data.main.humidity}%`);
-  var windEl = $('<p>').text(`Wind: ${data.wind.speed} Miles/HR`);
-  $('#today').append(todayEl, tempEl, humidityEl, windEl, createUV(data));
-  
-  // create UV Index
-  var lowEl = $('<span>').text('Low').addClass('low px-1 rounded-left');
-  var modEl = $('<span>').text('Mod').addClass('mod px-1');
-  var highEl = $('<span>').text('High').addClass('high px-1');
-  var veryHighEl = $('<span>').text('Very High').addClass('very-high px-1');
-  var extremeEl = $('<span>').text('Extreme').addClass('extreme px-1 rounded-right');
-  $('#uv-index').find('p').text('UV Index Reference Chart: ').append(lowEl, modEl, highEl, veryHighEl, extremeEl);
-  $('.forecast-container').show();
+  return $('<li>').text(today);  
 };
 
-// create 5 day forecast
-var createForecast = function(city) {
-  var apiUrl = `https://api.openweathermap.org/data/2.5/forecast?units=imperial&q=${city}&appid=${apiKey}`;
-  fetch(apiUrl).then(function(response) {
+// list temp, humidity, wind speed, UV Index for current day
+function createDaily(city) {
+  $('#city-name').empty();
+  $('#today').empty();
+  var city = $('#city').val().trim().toLowerCase();
+  storeData(city);
+  createFiveDay(city);
+  var searchItem = `https://api.openweathermap.org/data/2.5/weather?units=imperial&q=${city}&appid=${apiKey}`;
+  
+  fetch(searchItem).then(function(response) {
+    
     if (response.ok) {
       response.json().then(function(data) {
-        // clear data before adding new data
-        $('#forecast-info').empty();
-        // iterating by 8 to ensure data pull is once per day: API returns information in 3 hour increments (8 * 3 = 24)
+        
+        // create weather icon
+        var weatherIconEl = $('#conditions-info').find('img').remove();
+        var weatherIconData = data.weather[0].icon;
+        
+        if (weatherIconData.includes('d')) {
+          weatherIconData = weatherIconData.replace('d', 'n');
+        } 
+        
+        if (weatherIconData.includes('n')) {
+          weatherIconData = weatherIconData.replace('n', 'd');
+        }
+        
+        // add weather icon after city name
+        var weatherIconEl = $('<img>').attr('src', `https://openweathermap.org/img/w/${weatherIconData}.png`);
+        
+        // create today's weather conditions
+        var currentDate = dayCondition();
+        var currentTemp = $('<li>').text(`Current Temperature: ${data.main.temp}${String.fromCharCode(176)} F`);
+        var currentHumidity = $('<li>').text(`Current Humidity: ${data.main.humidity}%`);
+        var currentWindSpeed = $('<li>').text(`Current Wind Speed: ${data.wind.speed} MPH`);
+        var uvIndex = createUVI(data.coord.lat, data.coord.lon);
+        var cityName = $('<span>').text(data.name)
+        // add elements to HTML
+        $('#city-name').append(cityName, weatherIconEl);
+        $('#today').append(currentDate, currentTemp, currentHumidity, currentWindSpeed, uvIndex);
+      })
+    }
+  })
+  // show current conditions and clear input box
+  $('#conditions').show();
+  city = $('#city').val('');
+};
+
+function createFiveDay(city) {
+  console.log("I'm in createFiveDay()")
+  $('#forecast').empty();
+  var searchItem = `https://api.openweathermap.org/data/2.5/forecast?units=imperial&q=${city}&appid=${apiKey}`;
+
+  fetch(searchItem).then(function(response) {
+
+    if (response.ok) {
+      response.json().then(function(data) {
+        console.log(data);
+        
+        // iterate every 8th index to ensure information is for new day
         for(let i = 0; i < 40; i += 8) {
           // Create date in MM/DD/YYYY format
           var dateTime = data.list[i].dt_txt;
+          // keep the day and month and get rid of time
           var date = dateTime.split(' ')[0];
+          // keep the MM and DD indexes to join back as MM/DD
           var dayMonth = date.split('-').splice(1, 2).join('/');
+          // split the entire date string on each character and just keep the YYYY
           var year = date.split('').splice(0, 4).join('');
+          // concatenate the date back together
           formattedDate = `${dayMonth}/${year}`;
-          dateEl = $('<p>').text(formattedDate);
+          futureDate = $('<p>').text(formattedDate);
           // create weather icon
           var weatherIconData = data.list[i].weather[0].icon;
       
@@ -112,95 +114,85 @@ var createForecast = function(city) {
           }
 
           var weatherIcon = $('<img>').attr('src', `https://openweathermap.org/img/w/${weatherIconData}.png`);
-          // create div to contain icon to prevent stretching across card
+          var weatherIconSpan = $('<span>');
           var weatherIconEl = $('<div>');
           weatherIconEl.append(weatherIcon);
-          // create temperature and humidity
-          var tempEl = $('<p>').text(`Temperature: ${data.list[i].main.temp}${String.fromCharCode(176)} F`);
-          var humidityEl = $('<p>').text(`Humidity: ${data.list[i].main.humidity}%`);
-          var containerEl = $('<div>').attr('class', 'card p-1 bg-primary text-light');
-          containerEl.append(dateEl, weatherIconEl, tempEl, humidityEl);
-          $('#forecast-info').append(containerEl);
+          // temperature
+          futureTemperature = $('<p>').text(`Temp: ${data.list[i].main.temp}${String.fromCharCode(176)} F`);
+          // humidity
+          futureHumidity = $('<p>').text(`Humidity: ${data.list[i].main.humidity}%`)
+
+          // create 5 day forecast cards
+          var cardEl = $('<div>').addClass('card p-1 bg-primary text-light');
+          cardEl.append(futureDate, weatherIconEl, futureTemperature, futureHumidity);
+          $('#forecast-cards').append(cardEl);
+          console.log(cardEl)
         }
       })
-    } else {
-      console.log(`ERROR`);
     }
   })
+  // display forecast for current city
+  $('#forecast').show();
 };
 
-// create accurate UV data
-var createUV = function(obj) {
-  var lat = obj.coord.lat;
-  var lon = obj.coord.lon;
-  var uvIndexLabelEl = $('<p>').text('UV Index: ');
-  var apiUrl = `https://api.openweathermap.org/data/2.5/uvi/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}`;
-  fetch(apiUrl).then(function(response) {
+// using different API endpoint that contains accurate UV Index
+function createUVI(lat, lon) {
+  // TODO: fix uv background color not displaying
+  var searchItem = `https://api.openweathermap.org/data/2.5/uvi/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}`;
+  var currentUvIndex = $('<li>').text('Current UV Index: ')
+
+  fetch(searchItem).then(function(response) {
     if (response.ok) {
       response.json().then(function(data) {
-        var uv = data[0].value;
-        var uvIndexEl = $('<span>').text(uv);
-        // check uv range and format background color
-        if (uv < 3) {
-            uvIndexEl.addClass('low rounded px-1');
-        } else if (uv < 6) {
-            uvIndexEl.addClass('mod rounded px-1');
-        } else if (uv <= 8) {
-            uvIndexEl.addClass('high rounded px-1');
-        } else if (uv < 11) {
-            uvIndexEl.addClass('very-high rounded px-1');
-        } else {
-            uvIndexEl.addClass('extreme rounded px-1');
+        var uvData = data[0].value;
+        var uvInt = Math.floor(uvData);
+        var uviEl = $('<span>').text(uvData).addClass('rounded px-1')
+
+        // set color for UVI based on whole number integer
+        switch(uvInt) {
+          case (uvInt < 3): uviEl.addClass('low'); break;
+          case (uvInt < 6): uviEl.addClass('moderate'); break;
+          case (uvInt < 8): uviEl.addClass('high'); break;
+          case (uvInt < 11): uviEl.addClass('very-high'); break;
+          case (uvInt >= 11): uviEl.addClass('extreme'); break;
         }
-        uvIndexLabelEl.append(uvIndexEl);
+        currentUvIndex.append(uviEl);
       })
     }
   })
-  return uvIndexLabelEl;
-};
-
-// keep list length manageable
-var checkRecent = function(city) {
-  recentCities.push(city);
-  if ($('.recent-cities li').length < 15) {
-    createRecent();
-  } else {
-    recentCities.shift();
-    createRecent();
-  }
-};
-
-// create list of recent queries
-var createRecent = function() {
-  $('.recent-cities').empty();
-  for(let i = 0; i < recentCities.length; i++) {
-    var cityEl = $('<li>').attr('class', 'recent-city bg-dark text-light p-1 col-12').text(recentCities[i])
-    $('.recent-cities').prepend(cityEl)
-  }
-  $('#recent-cities-title').show()
-  localStorage.setItem('recent', JSON.stringify(recentCities))
+  return currentUvIndex;
 }
+// h2 element with current conditions
+// function createFiveDay()
+// create card with date, weather symbol, temp, humidity
+function storeData(city) {
+// TODO: Fix storage and keep displayed list at 15
+  if (cityList > 14) {
+    cityList.shift();
+    localStorage.setItem('city', JSON.stringify(cityList));
+    cityList.push(city);
+    loadData();
 
-// listen for new query 
-$('.city-form').on('submit', function(event){
-  event.preventDefault()
-  var city = $(this).find('#city').val().trim().toLowerCase()
-  $('#city').val('')
-  checkForecast(city)
-});
-
-// send city name as query to checkForecast() when clicking recent city
-$('.recent-cities').on('click', 'li', function(event){
-  event.preventDefault()
-  var city = $(this).text()
-  checkForecast(city)
-});
-
-// hide hardcoded HTML elements and city list until data is applied
-$('.forecast-container').hide()
-
-if (recentCities.length < 1){
-  $('#recent-cities-title').hide()
-} else {
-  createRecent()
+  } else {
+    localStorage.setItem('city', JSON.stringify(cityList));
+    cityList.push(city);
+    loadData();
+  }
 };
+
+// store list of recent searched cities
+// function checkStoredData()
+// pull stored information and show to user
+
+// hide elements until data is ready to be displayed
+$('#conditions').hide();
+$('#forecast').hide();
+// event listener for search input
+$('.city-search').on('submit', function(event) {
+  event.preventDefault();
+  createDaily();
+});
+
+loadData();
+  // checkStoredData() and then redirect to create functions
+// event listener for recent-city-list

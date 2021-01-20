@@ -15,44 +15,42 @@
   </nav>
       
   <div class="container-fluid row d-flex flex-wrap">
-    <!-- Left Column for Searches -->
+
+    <!-- search column -->
     <div class="city-container col-lg-3 col-sm-12 p-1">
-      <form class="city-form input-group">
+      <form class="city-search input-group">
         <label class="search-label col-12" for="city">Search for a City:</label>
         <input class="form-control col-7" id="city" name="city" type="text" required>
         <button id="search-btn" type="submit" class="btn btn-primary"><span class="fas fa-search"></span></button>
       </form>
 
-      <ul class="recent-cities col-12 text-center">
-          <!-- javascript adds recent queries, up to 15 -->
+      <ul class="recent-city-list col-12 text-center">
+          <!-- dynamic list of 15 most recent cities -->
       </ul>
+
     </div>
 
-    <!-- Right Column for Weather and Forecasts-->
-    <div class="forecast-container col-lg-9 col-sm-12">
-      <div class="col-12" id="conditions">
-        <h2 id="conditions-info">Current Conditions in <span><!--City Name--></span></h2>
+    <!-- column for weather and forecasts-->
+    <div class="weather container col-lg-9 col-sm-12">
+      <div class="col-12 border-top border-left border-bottom mt-2" id="conditions">
+        <h2 id="city-name"></h2>
         <div class="row">
-          <div class="col-12" id="today">
+          <ul class="current-conditions col-12" id="today">
                     
-          </div>
-
-          <div class="col-12" id="uv-index">
-            <p>UV Index Reference Chart: </p>
-          </div>
+          </ul>
         </div>
       </div>
 
       <div class="col-12" id="forecast">
         <h2 class="bg-dark text-light rounded text-center py-1">Five Day Forecast:</h2>
-        <div class="row" id="forecast-info">
-        <!-- javascript creates 5 day forecast-->
+        <div class="row forecast-cards" id="forecast-cards">
+        <!-- dynamic 5 day forecast-->
         </div>
       </div>
     </div>
   </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="./assets/js/weather.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.min.js" integrity="sha512-8qmis31OQi6hIRgvkht0s6mCOittjMa9GMqtK9hes5iEQBQE/Ca6yGE5FsW36vyipGoWQswBj/QBm2JR086Rkw==" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.min.js"></script>
 </body>
 </html>
