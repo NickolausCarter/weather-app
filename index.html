@@ -4,53 +4,54 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Weather Dashboard</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
-  <link rel="stylesheet" href="./assets/css/style.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/all.css">
   <link rel="icon" type="image/ico" href="./assets/images/favicon.ico">
 </head>
 <body>
-  <nav class="text-center bg-dark text-light py-2">
+  <header class="text-center bg-dark text-light pb-3">
     <h1>Weather Dashboard</h1>
-  </nav>
+  </header>
       
-  <div class="container-fluid row d-flex flex-wrap">
+  <main class="container-fluid">
+    <div class="row">
+      <!-- Search section -->
+      <section class="col-md-4 bg-light">
+        <h4>Search for a City:</h4>
 
-    <!-- search column -->
-    <div class="city-container col-lg-3 col-sm-12 p-1">
-      <form class="city-search input-group">
-        <label class="search-label col-12" for="city">Search for a City:</label>
-        <input class="form-control col-7" id="city" name="city" type="text" required>
-        <button id="search-btn" type="submit" class="btn btn-primary"><span class="fas fa-search"></span></button>
-      </form>
+        <div class="input-group mb-3">
+          <input id="city-input" type="text" class="form-control">
+          <button class="btn btn-primary" type="button" id="search-button"><i class="fas fa-search-location"></i></button>
+        </div>
 
-      <ul class="recent-city-list col-12 text-center">
-          <!-- dynamic list of 15 most recent cities -->
-      </ul>
+        <div class="card">
+          <ul id="search-card" class="list-group list-group-flush">
 
-    </div>
-
-    <!-- column for weather and forecasts-->
-    <div class="weather container col-lg-9 col-sm-12">
-      <div class="col-12 border-top border-left border-bottom mt-2" id="conditions">
-        <h2 id="city-name"></h2>
-        <div class="row">
-          <ul class="current-conditions col-12" id="today">
-                    
           </ul>
         </div>
-      </div>
+      </section>
 
-      <div class="col-12" id="forecast">
-        <h2 class="bg-dark text-light rounded text-center py-1">Five Day Forecast:</h2>
-        <div class="row forecast-cards" id="forecast-cards">
-        <!-- dynamic 5 day forecast-->
+      <!-- column for weather and forecasts-->
+      <section class="col-md-8">
+        <!-- current weather -->
+        <div class="row border d-block">
+          <h2 class="p-4" id="current-city"></h2>       
+          <h5 class="pl-4 pb-4">Temperature: <span id="current-temp"></span></h5>
+          <h5 class="pl-4 pb-4">Humidity: <span id="current-humidity"></span></h5>
+          <h5 class="pl-4 pb-4">Wind Speed: <span id="current-wind"></span></h5>
+          <h5 class="pl-4 pb-4">UV Index: <span id="current-uvi"></span></h5>
         </div>
-      </div>
+
+        <!-- five day forecast -->
+          <h3>5-Day Forecast:</h3>
+          <div id="forecast" class="row d-flex justify-content-around">
+
+          </div>
+      </section>
     </div>
-  </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  </main>
+
   <script src="./assets/js/weather.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.min.js"></script>
+
 </body>
 </html>
