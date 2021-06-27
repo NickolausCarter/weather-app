@@ -8,24 +8,22 @@ A project to display current weather and five-day forecast using https://openwea
 
 - Using the browser fetch() command
 - How to use data from server-side API
-- How to manipulate Javascript date() information
+- Refactoring code to make it cleaner and more readable
 - I focused more on dynamically scripting HTML with JavaScript
 - Gained more familiarity with Bootstrap and got faster with searching for utility classes
 
 ## Built With
 
 - HTML
-- CSS
 - JavaScript
 - Bootstrap
-- jQuery
 
 ## Website
 
 https://nickolauscarter.github.io/weather-app/
 
 Homepage:\
-![image](https://user-images.githubusercontent.com/73920328/104884162-86810400-592b-11eb-8ffe-98c5d10d3d15.png)
+![image](https://user-images.githubusercontent.com/73920328/123534940-485feb80-d6e6-11eb-953c-5b89a3bee4df.png)
 
 ## Contribution
 
